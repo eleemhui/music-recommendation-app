@@ -1,5 +1,4 @@
 import os
-
 from psycopg2.pool import SimpleConnectionPool
 
 _pool: SimpleConnectionPool | None = None

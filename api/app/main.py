@@ -7,7 +7,9 @@ from pydantic import BaseModel, Field
 from app.recommender import recommend
 
 # Match nginx log timestamp format: 2026/02/27 16:56:47
-_fmt = logging.Formatter("%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y/%m/%d %H:%M:%S")
+_fmt = logging.Formatter(
+    "%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y/%m/%d %H:%M:%S"
+)
 for _name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
     _log = logging.getLogger(_name)
     for _h in _log.handlers:

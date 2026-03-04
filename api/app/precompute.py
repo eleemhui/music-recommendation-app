@@ -30,7 +30,9 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 BATCH_SIZE = 512
 
 
-def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None) -> None:
+def precompute(
+    src: str, out_dir: str, chunk_size: int, limit: int | None = None
+) -> None:
     print(f"[precompute] Reading {src}...")
     df = pd.read_csv(src, dtype=str)
 
@@ -60,7 +62,9 @@ def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None
     model = SentenceTransformer(MODEL_NAME)
 
     n_chunks = math.ceil(total / chunk_size)
-    print(f"[precompute] Writing {n_chunks} chunk(s) of up to {chunk_size} rows each...")
+    print(
+        f"[precompute] Writing {n_chunks} chunk(s) of up to {chunk_size} rows each..."
+    )
 
     for chunk_idx in range(n_chunks):
         start = chunk_idx * chunk_size
