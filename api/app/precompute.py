@@ -30,9 +30,7 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 BATCH_SIZE = 512
 
 
-def precompute(
-    src: str, out_dir: str, chunk_size: int, limit: int | None = None
-) -> None:
+def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None) -> None:
     print(f"[precompute] Reading {src}...")
     df = pd.read_csv(src, dtype=str)
 
@@ -62,9 +60,7 @@ def precompute(
     model = SentenceTransformer(MODEL_NAME)
 
     n_chunks = math.ceil(total / chunk_size)
-    print(
-        f"[precompute] Writing {n_chunks} chunk(s) of up to {chunk_size} rows each..."
-    )
+    print(f"[precompute] Writing {n_chunks} chunk(s) of up to {chunk_size} rows each...")
 
     for chunk_idx in range(n_chunks):
         start = chunk_idx * chunk_size
@@ -72,9 +68,7 @@ def precompute(
         chunk_df = df.iloc[start:end].reset_index(drop=True)
         n = len(chunk_df)
 
-        print(
-            f"[precompute] Chunk {chunk_idx:04d}: rows {start}–{end - 1} ({n} songs) — embedding..."
-        )
+        print(f"[precompute] Chunk {chunk_idx:04d}: rows {start}–{end - 1} ({n} songs) — embedding...")
         lyrics = [t[:1000] for t in chunk_df["lyrics"].tolist()]
         embeddings = model.encode(
             lyrics,

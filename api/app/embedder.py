@@ -17,7 +17,5 @@ def embed(text: str) -> list[float]:
 
 def embed_batch(texts: list[str]) -> list[list[float]]:
     truncated = [t[:1000] for t in texts]
-    vecs = get_model().encode(
-        truncated, normalize_embeddings=True, batch_size=64, show_progress_bar=True
-    )
+    vecs = get_model().encode(truncated, normalize_embeddings=True, batch_size=64, show_progress_bar=True)
     return [v.tolist() for v in vecs]
