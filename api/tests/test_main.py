@@ -55,19 +55,19 @@ def test_recommend_returns_correct_fields(client):
 
 
 def test_recommend_default_n_is_5(client):
-    with patch("app.recommender.recommend", return_value=MOCK_SONGS) as mock_rec:
+    with patch("app.main.recommend", return_value=MOCK_SONGS) as mock_rec:
         client.post("/recommend", json={"phrase": "test"})
     mock_rec.assert_called_once_with("test", 5)
 
 
 def test_recommend_custom_n(client):
-    with patch("app.recommender.recommend", return_value=MOCK_SONGS) as mock_rec:
+    with patch("app.main.recommend", return_value=MOCK_SONGS) as mock_rec:
         client.post("/recommend", json={"phrase": "test", "n": 3})
     mock_rec.assert_called_once_with("test", 3)
 
 
 def test_recommend_strips_whitespace_from_phrase(client):
-    with patch("app.recommender.recommend", return_value=MOCK_SONGS) as mock_rec:
+    with patch("app.main.recommend", return_value=MOCK_SONGS) as mock_rec:
         client.post("/recommend", json={"phrase": "  summer vibes  "})
     mock_rec.assert_called_once_with("summer vibes", 5)
 
