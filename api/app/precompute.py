@@ -18,12 +18,8 @@ seed.py will detect these files and use them instead of re-embedding at startup.
 """
 
 import argparse
-import os
-import sys
 import math
-
-# Disable cuBLASLt — required for sm_50 (Maxwell) GPUs like the Quadro M1200
-os.environ.setdefault("DISABLE_ADDMM_CUDA_LT", "1")
+import os
 
 import numpy as np
 import pandas as pd
@@ -31,7 +27,7 @@ from sentence_transformers import SentenceTransformer
 
 EMBED_DIM = 384
 MODEL_NAME = "all-MiniLM-L6-v2"
-BATCH_SIZE = 64  # reduced from 512 to keep sm_50 GPU stable
+BATCH_SIZE = 512
 
 
 def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None) -> None:
@@ -60,8 +56,8 @@ def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None
 
     os.makedirs(out_dir, exist_ok=True)
 
-    print(f"[precompute] Loading model {MODEL_NAME} (cuda)...")
-    model = SentenceTransformer(MODEL_NAME, device="cuda")
+    print(f"[precompute] Loading model {MODEL_NAME}...")
+    model = SentenceTransformer(MODEL_NAME)
 
     n_chunks = math.ceil(total / chunk_size)
     print(f"[precompute] Writing {n_chunks} chunk(s) of up to {chunk_size} rows each...")
