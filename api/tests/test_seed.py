@@ -21,7 +21,8 @@ def test_insert_rows_commits_in_batches():
 
     rows = [("title", "artist", "[0.1]")] * 25_000
 
-    with patch("app.seed.COMMIT_BATCH", 10_000):
+    with patch("app.seed.COMMIT_BATCH", 10_000), \
+         patch("app.seed.execute_values"):
         from app.seed import _insert_rows
         _insert_rows(mock_conn, rows)
 
@@ -37,7 +38,8 @@ def test_insert_rows_opens_new_cursor_per_batch():
 
     rows = [("t", "a", "[0.1]")] * 15_000
 
-    with patch("app.seed.COMMIT_BATCH", 10_000):
+    with patch("app.seed.COMMIT_BATCH", 10_000), \
+         patch("app.seed.execute_values"):
         from app.seed import _insert_rows
         _insert_rows(mock_conn, rows)
 
