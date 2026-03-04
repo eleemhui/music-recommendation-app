@@ -7,6 +7,7 @@ Priority:
 
 Skips entirely if the songs table already has rows.
 """
+
 import glob
 import logging
 import os
@@ -16,17 +17,21 @@ import numpy as np
 import pandas as pd
 from psycopg2.extras import execute_values
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))  # noqa: E402
+
+from app.db import init_db, songs_empty, get_conn, put_conn  # noqa: E402
+from app.embedder import embed_batch  # noqa: E402
 
 log = logging.getLogger("seed")
 if not log.handlers:
     _h = logging.StreamHandler()
-    _h.setFormatter(logging.Formatter("%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y/%m/%d %H:%M:%S"))
+    _h.setFormatter(
+        logging.Formatter(
+            "%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y/%m/%d %H:%M:%S"
+        )
+    )
     log.addHandler(_h)
 log.setLevel(logging.INFO)
-
-from app.db import init_db, songs_empty, get_conn, put_conn
-from app.embedder import embed_batch
 
 CSV_PATH = "/data/lyrics.csv"
 PRECOMPUTED_DIR = "/data/precomputed"
@@ -36,6 +41,7 @@ COMMIT_BATCH = 10_000
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _insert_rows(conn, rows: list[tuple]) -> None:
     """Bulk-insert rows in commits of COMMIT_BATCH to keep transactions small."""
@@ -57,9 +63,12 @@ def _insert_rows(conn, rows: list[tuple]) -> None:
 # Fast path: pre-computed .npz files
 # ---------------------------------------------------------------------------
 
+
 def _seed_from_precomputed(chunks: list[str]) -> None:
     chunks = sorted(chunks)
-    log.info(f"[seed] Found {len(chunks)} precomputed chunk(s) — skipping embedding step.")
+    log.info(
+        f"[seed] Found {len(chunks)} precomputed chunk(s) — skipping embedding step."
+    )
     conn = get_conn()
     try:
         total = 0
@@ -91,12 +100,15 @@ def _seed_from_precomputed(chunks: list[str]) -> None:
 # Slow path: CSV + on-the-fly embedding
 # ---------------------------------------------------------------------------
 
+
 def _seed_from_csv() -> None:
     log.info(f"[seed] Loading {CSV_PATH}...")
     df = pd.read_csv(CSV_PATH)
     required = {"title", "artist", "lyrics"}
     if not required.issubset(df.columns):
-        raise ValueError(f"CSV must contain columns: {required}. Got: {set(df.columns)}")
+        raise ValueError(
+            f"CSV must contain columns: {required}. Got: {set(df.columns)}"
+        )
 
     df = df.dropna(subset=["title", "artist", "lyrics"])
     log.info(f"[seed] Embedding {len(df)} songs (this may take a while)...")
@@ -122,6 +134,7 @@ def _seed_from_csv() -> None:
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def seed() -> None:
     log.info("[seed] Initialising database schema...")
