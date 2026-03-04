@@ -1,4 +1,5 @@
 import urllib.parse
+
 from app.db import get_conn, put_conn
 from app.embedder import embed
 
