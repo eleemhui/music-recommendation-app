@@ -7,6 +7,7 @@ Priority:
 
 Skips entirely if the songs table already has rows.
 """
+
 import glob
 import logging
 import os
@@ -16,7 +17,10 @@ import numpy as np
 import pandas as pd
 from psycopg2.extras import execute_values
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))  # noqa: E402
+
+from app.db import get_conn, init_db, put_conn, songs_empty  # noqa: E402
+from app.embedder import embed_batch  # noqa: E402
 
 log = logging.getLogger("seed")
 if not log.handlers:
@@ -37,6 +41,7 @@ COMMIT_BATCH = 10_000
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _insert_rows(conn, rows: list[tuple]) -> None:
     """Bulk-insert rows in commits of COMMIT_BATCH to keep transactions small."""
     for offset in range(0, len(rows), COMMIT_BATCH):
@@ -56,6 +61,7 @@ def _insert_rows(conn, rows: list[tuple]) -> None:
 # ---------------------------------------------------------------------------
 # Fast path: pre-computed .npz files
 # ---------------------------------------------------------------------------
+
 
 def _seed_from_precomputed(chunks: list[str]) -> None:
     chunks = sorted(chunks)
@@ -91,6 +97,7 @@ def _seed_from_precomputed(chunks: list[str]) -> None:
 # Slow path: CSV + on-the-fly embedding
 # ---------------------------------------------------------------------------
 
+
 def _seed_from_csv() -> None:
     log.info(f"[seed] Loading {CSV_PATH}...")
     df = pd.read_csv(CSV_PATH)
@@ -122,6 +129,7 @@ def _seed_from_csv() -> None:
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def seed() -> None:
     log.info("[seed] Initialising database schema...")

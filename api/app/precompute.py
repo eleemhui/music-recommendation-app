@@ -68,7 +68,7 @@ def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None
         chunk_df = df.iloc[start:end].reset_index(drop=True)
         n = len(chunk_df)
 
-        print(f"[precompute] Chunk {chunk_idx:04d}: rows {start}–{end-1} ({n} songs) — embedding...")
+        print(f"[precompute] Chunk {chunk_idx:04d}: rows {start}–{end - 1} ({n} songs) — embedding...")
         lyrics = [t[:1000] for t in chunk_df["lyrics"].tolist()]
         embeddings = model.encode(
             lyrics,
@@ -91,13 +91,27 @@ def precompute(src: str, out_dir: str, chunk_size: int, limit: int | None = None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Precompute song lyric embeddings.")
-    parser.add_argument("--src", default="/home/eleemhuis/spotify_millsongdata_clean.csv",
-                        help="Path to source CSV (artist, song/title, text/lyrics columns)")
-    parser.add_argument("--out", default="data/precomputed",
-                        help="Output directory for .npz chunk files")
-    parser.add_argument("--chunk", type=int, default=100_000,
-                        help="Max rows per output file (default 100000)")
-    parser.add_argument("--limit", type=int, default=None,
-                        help="Only process the first N rows (default: all)")
+    parser.add_argument(
+        "--src",
+        default="/home/eleemhuis/spotify_millsongdata_clean.csv",
+        help="Path to source CSV (artist, song/title, text/lyrics columns)",
+    )
+    parser.add_argument(
+        "--out",
+        default="data/precomputed",
+        help="Output directory for .npz chunk files",
+    )
+    parser.add_argument(
+        "--chunk",
+        type=int,
+        default=100_000,
+        help="Max rows per output file (default 100000)",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Only process the first N rows (default: all)",
+    )
     args = parser.parse_args()
     precompute(args.src, args.out, args.chunk, args.limit)
