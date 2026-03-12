@@ -25,8 +25,8 @@ if not log.handlers:
     log.addHandler(_h)
 log.setLevel(logging.INFO)
 
-from app.db import init_db, songs_empty, get_conn, put_conn
-from app.embedder import embed_batch
+from app.db import init_db, songs_empty, get_conn, put_conn  # noqa: E402
+from app.embedder import embed_batch  # noqa: E402
 
 CSV_PATH = "/data/lyrics.csv"
 PRECOMPUTED_DIR = "/data/precomputed"
